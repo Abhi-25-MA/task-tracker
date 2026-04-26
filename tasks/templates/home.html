@@ -73,7 +73,7 @@
     </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container mt-4">
 
     <!-- DASHBOARD -->
     <div class="row mb-4">
@@ -81,48 +81,28 @@
         <div class="col-md-4">
             <div class="card p-3 text-center">
                 <h5>Total Tasks</h5>
-                <h2>{{ tasks|length }}</h2>
+                <h2>{{ total_tasks }}</h2>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card p-3 text-center">
                 <h5>Completed</h5>
-                <h2>
-                    {% with completed=0 %}
-                    {% for task in tasks %}
-                        {% if task.completed %}
-                            {% with completed=completed|add:1 %}{% endwith %}
-                        {% endif %}
-                    {% endfor %}
-                    {{ completed }}
-                    {% endwith %}
-                </h2>
+                <h2>{{ completed_tasks }}</h2>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card p-3 text-center">
                 <h5>Pending</h5>
-                <h2>
-                    {% with total=tasks|length %}
-                    {% with completed=0 %}
-                    {% for task in tasks %}
-                        {% if task.completed %}
-                            {% with completed=completed|add:1 %}{% endwith %}
-                        {% endif %}
-                    {% endfor %}
-                    {{ total }}
-                    {% endwith %}
-                    {% endwith %}
-                </h2>
+                <h2>{{ pending_tasks }}</h2>
             </div>
         </div>
 
     </div>
 
     <!-- ADD TASK -->
-    <div class="card p-4 shadow">
+    <div class="card p-4 shadow-sm">
         <h4 class="mb-3">Add New Task</h4>
 
         <form method="POST" action="/add/" class="d-flex">
@@ -138,7 +118,7 @@
     </div>
 
     <!-- TASK LIST -->
-    <div class="card mt-4 p-4 shadow">
+    <div class="card mt-4 p-4 shadow-sm">
         <h4>My Tasks</h4>
 
         <table class="table table-hover mt-3">

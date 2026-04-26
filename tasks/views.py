@@ -3,11 +3,24 @@ from .models import Task
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 
 @login_required
 def home(request):
     tasks = Task.objects.filter(user=request.user)
-    return render(request, 'home.html', {'tasks': tasks})
+
+    total_tasks = tasks.count()
+    completed_tasks = tasks.filter(completed=True).count()
+    pending_tasks = tasks.filter(completed=False).count()
+
+    context = {
+        'tasks': tasks,
+        'total_tasks': total_tasks,
+        'completed_tasks': completed_tasks,
+        'pending_tasks': pending_tasks,
+    }
+
+    return render(request, 'home.html', context)
 
 @login_required
 def add_task(request):
@@ -57,7 +70,7 @@ def login_view(request):
 # LOGOUT
 def logout_view(request):
     logout(request)
-    request.session.flush()   # 👈 ADD THIS LINE
+    request.session.flush()   
     return redirect('/login/')
 
 # SIGNUP
