@@ -2,14 +2,14 @@ from django.shortcuts import render, redirect
 from .models import Task
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
     tasks = Task.objects.filter(user=request.user)
     return render(request, 'home.html', {'tasks': tasks})
 
+@login_required
 def add_task(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -17,20 +17,22 @@ def add_task(request):
             Task.objects.create(user=request.user, title=title)
     return redirect('/')
 
+@login_required
 def delete_task(request, id):
-    task = Task.objects.get(id=id)
+    task = Task.objects.get(id=id, user=request.user)
     task.delete()
     return redirect('/')
 
+@login_required
 def toggle_complete(request, id):
-    task = Task.objects.get(id=id)
+    task = Task.objects.get(id=id, user=request.user)
     task.completed = not task.completed
     task.save()
     return redirect('/')
 
+@login_required
 def edit_task(request, id):
-    task = Task.objects.get(id=id)
-
+    task = Task.objects.get(id=id, user=request.user)
     if request.method == 'POST':
         task.title = request.POST.get('title')
         task.save()
