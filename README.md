@@ -20,6 +20,7 @@ A full-stack Task Management application that allows users to organize their dai
 1. Clone the repository:
    git clone [https://github.com/Abhi-25-MA/task-tracker.git](https://github.com/Abhi-25-MA/task-tracker.git)
    cd task-tracker
+   
 2.Install dependencies:
 pip install -r requirements.txt
 
