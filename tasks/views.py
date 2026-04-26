@@ -1,0 +1,69 @@
+from django.shortcuts import render, redirect
+from .models import Task
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+
+def home(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    tasks = Task.objects.filter(user=request.user)
+    return render(request, 'home.html', {'tasks': tasks})
+
+def add_task(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        if title:
+            Task.objects.create(user=request.user, title=title)
+    return redirect('/')
+
+def delete_task(request, id):
+    task = Task.objects.get(id=id)
+    task.delete()
+    return redirect('/')
+
+def toggle_complete(request, id):
+    task = Task.objects.get(id=id)
+    task.completed = not task.completed
+    task.save()
+    return redirect('/')
+
+def edit_task(request, id):
+    task = Task.objects.get(id=id)
+
+    if request.method == 'POST':
+        task.title = request.POST.get('title')
+        task.save()
+        return redirect('/')
+
+    return render(request, 'edit.html', {'task': task})
+
+# LOGIN
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            login(request, user)
+            return redirect('/')
+    
+    return render(request, 'login.html')
+
+# LOGOUT
+def logout_view(request):
+    logout(request)
+    return redirect('/login/')
+
+# SIGNUP
+def signup_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        User.objects.create_user(username=username, password=password)
+        return redirect('/login/')
+
+    return render(request, 'signup.html')
