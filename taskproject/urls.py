@@ -1,10 +1,12 @@
+from django.contrib import admin
+from django.urls import path, include
 from tasks import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('login/', views.login_view),
-    path('logout/', views.logout_view),  # 👈 THIS IS IMPORTANT
+    path('logout/', views.logout_view),
 
     path('', include('tasks.urls')),
 ]
