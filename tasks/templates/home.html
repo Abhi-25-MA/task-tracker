@@ -4,12 +4,36 @@
     <title>Task Tracker</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .task-row:hover {
+            background-color: #f1f1f1;
+            transition: 0.3s;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .btn {
+            border-radius: 20px;
+        }
+
+        input {
+            border-radius: 20px !important;
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-dark bg-dark px-4">
-    <span class="navbar-brand mb-0 h1">Task Tracker</span>
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4 shadow">
+    <span class="navbar-brand fw-bold">📝 Task Tracker</span>
 
     <div>
         <span class="text-white me-3">
@@ -22,22 +46,30 @@
         </form>
     </div>
 </nav>
-<div class="container mt-4">
 
-    <div class="card p-4 shadow-sm">
-        <h3 class="mb-3">Add New Task</h3>
+<div class="container mt-5">
+
+    <!-- ADD TASK -->
+    <div class="card p-4 shadow-lg border-0">
+        <h4 class="mb-3 fw-semibold">Add New Task</h4>
 
         <form method="POST" action="/add/" class="d-flex">
             {% csrf_token %}
-            <input type="text" name="title" class="form-control me-2" placeholder="Enter task..." required>
-            <button type="submit" class="btn btn-success">Add</button>
+            <input type="text" name="title"
+                   class="form-control me-2 px-3"
+                   placeholder="Enter task..." required>
+
+            <button type="submit" class="btn btn-success px-4">
+                + Add
+            </button>
         </form>
     </div>
 
-    <div class="card mt-4 p-3 shadow-sm">
-        <h3>My Tasks</h3>
+    <!-- TASK LIST -->
+    <div class="card mt-4 p-4 shadow-lg border-0">
+        <h4 class="fw-semibold">My Tasks</h4>
 
-        <table class="table table-hover mt-3">
+        <table class="table table-hover align-middle mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>#</th>
@@ -49,7 +81,7 @@
 
             <tbody>
                 {% for task in tasks %}
-                <tr>
+                <tr class="task-row">
                     <td>{{ forloop.counter }}</td>
 
                     <td>
@@ -64,16 +96,16 @@
 
                     <td>
                         {% if task.completed %}
-                            <span class="badge bg-success">Done</span>
+                            <span class="badge bg-success px-3 py-2">✔ Done</span>
                         {% else %}
-                            <span class="badge bg-warning text-dark">Pending</span>
+                            <span class="badge bg-warning text-dark px-3 py-2">⏳ Pending</span>
                         {% endif %}
                     </td>
 
                     <td>
-                        <a href="/complete/{{ task.id }}" class="btn btn-sm btn-primary">Toggle</a>
-                        <a href="/edit/{{ task.id }}" class="btn btn-sm btn-info">Edit</a>
-                        <a href="/delete/{{ task.id }}" class="btn btn-sm btn-danger">Delete</a>
+                        <a href="/complete/{{ task.id }}" class="btn btn-outline-primary btn-sm">Toggle</a>
+                        <a href="/edit/{{ task.id }}" class="btn btn-outline-info btn-sm">Edit</a>
+                        <a href="/delete/{{ task.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
