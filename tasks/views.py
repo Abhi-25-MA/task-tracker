@@ -7,27 +7,39 @@ from django.db.models import Count
 
 @login_required
 def home(request):
+    query = request.GET.get('q', '')  # 🔍 search input
+
     tasks = Task.objects.filter(user=request.user)
 
-    total_tasks = tasks.count()
-    completed_tasks = tasks.filter(completed=True).count()
-    pending_tasks = tasks.filter(completed=False).count()
+    # SEARCH FILTER
+    if query:
+        tasks = tasks.filter(title__icontains=query)
+
+    total_tasks = Task.objects.filter(user=request.user).count()
+    completed_tasks = Task.objects.filter(user=request.user, completed=True).count()
+    pending_tasks = Task.objects.filter(user=request.user, completed=False).count()
 
     context = {
         'tasks': tasks,
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'pending_tasks': pending_tasks,
+        'query': query,
     }
 
     return render(request, 'home.html', context)
-
 @login_required
 def add_task(request):
     if request.method == 'POST':
         title = request.POST.get('title')
+        due_date = request.POST.get('due_date')
+
         if title:
-            Task.objects.create(user=request.user, title=title)
+            Task.objects.create(
+                user=request.user,
+                title=title,
+                due_date=due_date if due_date else None
+            )
     return redirect('/')
 
 @login_required

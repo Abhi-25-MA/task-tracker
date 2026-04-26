@@ -75,7 +75,38 @@
 
 <div class="container mt-4">
 
-    <!-- DASHBOARD -->
+    <!-- 🔍 SEARCH + FILTER -->
+    <div class="card p-3 mb-3 shadow-sm">
+
+        <form method="GET" class="d-flex">
+            <input type="text"
+                   name="q"
+                   value="{{ query }}"
+                   class="form-control me-2"
+                   placeholder="Search tasks...">
+
+            <button class="btn btn-primary">🔍 Search</button>
+
+            <a href="/" class="btn btn-secondary ms-2">Reset</a>
+        </form>
+
+    </div>
+
+    <div class="mb-3">
+
+        <a href="/" class="btn btn-sm btn-outline-dark">All</a>
+
+        <a href="/?q=&filter=completed" class="btn btn-sm btn-outline-success">
+            Completed
+        </a>
+
+        <a href="/?q=&filter=pending" class="btn btn-sm btn-outline-warning">
+            Pending
+        </a>
+
+    </div>
+
+    <!-- 📊 DASHBOARD -->
     <div class="row mb-4">
 
         <div class="col-md-4">
@@ -101,23 +132,27 @@
 
     </div>
 
-    <!-- ADD TASK -->
+    <!-- ➕ ADD TASK -->
     <div class="card p-4 shadow-sm">
         <h4 class="mb-3">Add New Task</h4>
 
-        <form method="POST" action="/add/" class="d-flex">
+        <form method="POST" action="/add/" class="d-flex flex-column gap-2">
             {% csrf_token %}
+
             <input type="text" name="title"
-                   class="form-control me-2"
+                   class="form-control"
                    placeholder="Enter task..." required>
 
+            <input type="date" name="due_date"
+                   class="form-control">
+
             <button type="submit" class="btn btn-success px-4">
-                + Add
+                + Add Task
             </button>
         </form>
     </div>
 
-    <!-- TASK LIST -->
+    <!-- 📋 TASK LIST -->
     <div class="card mt-4 p-4 shadow-sm">
         <h4>My Tasks</h4>
 
@@ -126,6 +161,7 @@
                 <tr>
                     <th>#</th>
                     <th>Task</th>
+                    <th>Due Date</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -144,6 +180,14 @@
                             </span>
                         {% else %}
                             {{ task.title }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if task.due_date %}
+                            {{ task.due_date }}
+                        {% else %}
+                            <span class="text-muted">No date</span>
                         {% endif %}
                     </td>
 
@@ -170,7 +214,7 @@
 
 </div>
 
-<!-- DARK MODE SCRIPT -->
+<!-- 🌙 DARK MODE SCRIPT -->
 <script>
 function toggleDark() {
     document.body.classList.toggle("dark-mode");
