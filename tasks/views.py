@@ -57,6 +57,7 @@ def login_view(request):
 # LOGOUT
 def logout_view(request):
     logout(request)
+    request.session.flush()   # 👈 ADD THIS LINE
     return redirect('/login/')
 
 # SIGNUP
