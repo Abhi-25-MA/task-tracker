@@ -7,24 +7,46 @@
 
     <style>
         body {
-            background-color: #f8f9fa;
-        }
-
-        .task-row:hover {
-            background-color: #f1f1f1;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             transition: 0.3s;
         }
 
         .card {
-            border-radius: 15px;
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
         }
 
         .btn {
-            border-radius: 20px;
+            border-radius: 25px;
         }
 
         input {
-            border-radius: 20px !important;
+            border-radius: 25px !important;
+        }
+
+        .task-row:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* DARK MODE */
+        body.dark-mode {
+            background: #121212;
+            color: white;
+        }
+
+        .dark-mode .card {
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .dark-mode .table {
+            color: white;
         }
     </style>
 </head>
@@ -36,6 +58,10 @@
     <span class="navbar-brand fw-bold">📝 Task Tracker</span>
 
     <div>
+        <button onclick="toggleDark()" class="btn btn-warning btn-sm me-2">
+            🌙 Dark Mode
+        </button>
+
         <span class="text-white me-3">
             👤 {{ request.user.username }}
         </span>
@@ -49,14 +75,60 @@
 
 <div class="container mt-5">
 
+    <!-- DASHBOARD -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card p-3 text-center">
+                <h5>Total Tasks</h5>
+                <h2>{{ tasks|length }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 text-center">
+                <h5>Completed</h5>
+                <h2>
+                    {% with completed=0 %}
+                    {% for task in tasks %}
+                        {% if task.completed %}
+                            {% with completed=completed|add:1 %}{% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ completed }}
+                    {% endwith %}
+                </h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 text-center">
+                <h5>Pending</h5>
+                <h2>
+                    {% with total=tasks|length %}
+                    {% with completed=0 %}
+                    {% for task in tasks %}
+                        {% if task.completed %}
+                            {% with completed=completed|add:1 %}{% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ total }}
+                    {% endwith %}
+                    {% endwith %}
+                </h2>
+            </div>
+        </div>
+
+    </div>
+
     <!-- ADD TASK -->
-    <div class="card p-4 shadow-lg border-0">
-        <h4 class="mb-3 fw-semibold">Add New Task</h4>
+    <div class="card p-4 shadow">
+        <h4 class="mb-3">Add New Task</h4>
 
         <form method="POST" action="/add/" class="d-flex">
             {% csrf_token %}
             <input type="text" name="title"
-                   class="form-control me-2 px-3"
+                   class="form-control me-2"
                    placeholder="Enter task..." required>
 
             <button type="submit" class="btn btn-success px-4">
@@ -66,10 +138,10 @@
     </div>
 
     <!-- TASK LIST -->
-    <div class="card mt-4 p-4 shadow-lg border-0">
-        <h4 class="fw-semibold">My Tasks</h4>
+    <div class="card mt-4 p-4 shadow">
+        <h4>My Tasks</h4>
 
-        <table class="table table-hover align-middle mt-3">
+        <table class="table table-hover mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>#</th>
@@ -82,6 +154,7 @@
             <tbody>
                 {% for task in tasks %}
                 <tr class="task-row">
+
                     <td>{{ forloop.counter }}</td>
 
                     <td>
@@ -96,17 +169,18 @@
 
                     <td>
                         {% if task.completed %}
-                            <span class="badge bg-success px-3 py-2">✔ Done</span>
+                            <span class="badge bg-success">Done</span>
                         {% else %}
-                            <span class="badge bg-warning text-dark px-3 py-2">⏳ Pending</span>
+                            <span class="badge bg-warning text-dark">Pending</span>
                         {% endif %}
                     </td>
 
                     <td>
-                        <a href="/complete/{{ task.id }}" class="btn btn-outline-primary btn-sm">Toggle</a>
-                        <a href="/edit/{{ task.id }}" class="btn btn-outline-info btn-sm">Edit</a>
-                        <a href="/delete/{{ task.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
+                        <a href="/complete/{{ task.id }}" class="btn btn-primary btn-sm">Toggle</a>
+                        <a href="/edit/{{ task.id }}" class="btn btn-info btn-sm">Edit</a>
+                        <a href="/delete/{{ task.id }}" class="btn btn-danger btn-sm">Delete</a>
                     </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
@@ -115,6 +189,25 @@
     </div>
 
 </div>
+
+<!-- DARK MODE SCRIPT -->
+<script>
+function toggleDark() {
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+        localStorage.setItem("dark", "on");
+    } else {
+        localStorage.setItem("dark", "off");
+    }
+}
+
+window.onload = function() {
+    if(localStorage.getItem("dark") === "on"){
+        document.body.classList.add("dark-mode");
+    }
+}
+</script>
 
 </body>
 </html>
