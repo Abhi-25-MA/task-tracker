@@ -80,11 +80,19 @@ def edit_task(request, id):
 
     if request.method == 'POST':
         task.title = request.POST.get('title')
+        
+        # Logic for due_date
+        due_date = request.POST.get('due_date')
+        task.due_date = due_date if due_date else None
+        
+        # Logic for completed checkbox
+        # Checkboxes only send data if they are checked
+        task.completed = 'completed' in request.POST
+        
         task.save()
         return redirect('/')
 
     return render(request, 'edit.html', {'task': task})
-
 
 # LOGIN
 def login_view(request):
